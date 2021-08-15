@@ -1,3 +1,4 @@
 *.pem
 *.cer
+.env
 __pycache__/
