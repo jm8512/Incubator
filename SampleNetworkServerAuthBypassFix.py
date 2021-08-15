@@ -10,6 +10,11 @@ import os
 import errno
 import random
 import string
+from dotenv import load_dotenv
+
+load_dotenv()
+password = os.environ.get('AUTH')
+
 
 class SmartNetworkThermometer (threading.Thread) :
     open_cmds = ["AUTH", "LOGOUT"]
@@ -23,12 +28,13 @@ class SmartNetworkThermometer (threading.Thread) :
         self.curTemperature = 0
         self.updateTemperature()
         self.tokens = []
-
+        
         self.serverSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.serverSocket.bind(("127.0.0.1", port))
         fcntl.fcntl(self.serverSocket, fcntl.F_SETFL, os.O_NONBLOCK)
 
         self.deg = "K"
+        
 
     def setSource(self, source) :
         self.source = source
@@ -58,12 +64,12 @@ class SmartNetworkThermometer (threading.Thread) :
             cs = c.split(' ')
             if len(cs) == 2 : #should be either AUTH or LOGOUT
                 if cs[0] == "AUTH":
-                    if cs[1] == "!Q#E%T&U8i6y4r2w" :
+                    if cs[1] == password:
                         self.tokens.append(''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16)))
                         self.serverSocket.sendto(self.tokens[-1].encode("utf-8"), addr)
                         #print (self.tokens[-1])
                     else:
-                        self.serverSocket.sendto(b"Invalid Auth", addr)
+                        self.serverSocket.sendto(b"Invalid Auth\n", addr)
                         break
                 elif cs[0] == "LOGOUT":
                     if cs[1] in self.tokens :
