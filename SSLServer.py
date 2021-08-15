@@ -73,9 +73,16 @@ class SmartNetworkThermometer (threading.Thread) :
                     if cs[1] == "!Q#E%T&U8i6y4r2w" :
                         self.tokens.append(''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16)))
                         conn.sendall(self.tokens[-1].encode("utf-8"))
+                    else:
+                        conn.sendall(b"Invalid Auth")
+                        break
                 elif cs[0] == "LOGOUT":
                     if cs[1] in self.tokens :
                         self.tokens.remove(cs[1])
+                    else:
+                        conn.sendall(b"Invalid Auth")
+                        break
+                
                 else : #unknown command
                     conn.sendall(b"Invalid Command\n")
 
