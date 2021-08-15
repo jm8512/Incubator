@@ -13,6 +13,10 @@ import string
 import ssl
 import dtls
 import traceback
+from dotenv import load_dotenv 
+
+load_dotenv()
+password = os.environ.get('AUTH')
 
 class SmartNetworkThermometer (threading.Thread) :
     open_cmds = ["AUTH", "LOGOUT"]
@@ -70,7 +74,7 @@ class SmartNetworkThermometer (threading.Thread) :
             cs = c.split(' ')
             if len(cs) == 2 : #should be either AUTH or LOGOUT
                 if cs[0] == "AUTH":
-                    if cs[1] == "!Q#E%T&U8i6y4r2w" :
+                    if cs[1] == password :
                         self.tokens.append(''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16)))
                         conn.sendall(self.tokens[-1].encode("utf-8"))
                     else:

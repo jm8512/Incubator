@@ -4,6 +4,11 @@ import time
 import math
 import socket
 import ssl
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+password = os.environ.get('AUTH')
 
 class SimpleNetworkClient :
     def __init__(self, port1, port2) :
@@ -64,7 +69,7 @@ class SimpleNetworkClient :
     def updateInfTemp(self, frame) :
         self.updateTime()
         if self.infToken is None : #not yet authenticated
-            self.infToken = self.authenticate(self.infPort, b"!Q#E%T&U8i6y4r2w")
+            self.infToken = self.authenticate(self.infPort, password.encode('utf-8'))
 
         self.infTemps.append(self.getTemperatureFromPort(self.infPort, self.infToken)-273)
         #self.infTemps.append(self.infTemps[-1] + 1)
@@ -75,7 +80,7 @@ class SimpleNetworkClient :
     def updateIncTemp(self, frame) :
         self.updateTime()
         if self.incToken is None : #not yet authenticated
-            self.incToken = self.authenticate(self.incPort, b"!Q#E%T&U8i6y4r2w")
+            self.incToken = self.authenticate(self.incPort, password.encode('utf-8'))
 
         self.incTemps.append(self.getTemperatureFromPort(self.incPort, self.incToken)-273)
         #self.incTemps.append(self.incTemps[-1] + 1)
